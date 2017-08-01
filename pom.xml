@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.firewarm</groupId>
+	<artifactId>testMondrian</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>testMondrian Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<repositories>
+		<repository>
+			<id>mine</id>
+			<name>public Releases</name>
+			<layout>default</layout>
+			<url>http://app.firewarm.com:8088/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>mine-meteorite-bi-release</id>
+			<name>public Releases</name>
+			<layout>default</layout>
+			<url>http://app.firewarm.com:8088/nexus/content/repositories/meteorite-bi-release/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pentaho</groupId>
+			<artifactId>mondrian</artifactId>
+			<version>4.5.0.2-208</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-dbcp</artifactId>
+					<groupId>commons-dbcp</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- <dependency> <groupId>pentaho</groupId> <artifactId>mondrian</artifactId> 
+			<version>4.3.1.3-175</version> </dependency> -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.9</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>testMondrian</finalName>
+	</build>
+</project>

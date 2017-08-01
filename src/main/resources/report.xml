@@ -1,0 +1,492 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+<Schema name="标准报表">
+	<cube name="agent_call" caption="座席呼叫数据" encoding="UTF-8">
+		<Table name="agg_c_fact_agent_detail"></Table>
+		<Dimension name="times"  foreignKey="time_id" caption="时间">
+			<Hierarchy hasAll="true"  primaryKey="time_id" allMemberName="times">	
+				<Table name="dim_date" />
+				<Level name="year" column="y_id" uniqueMembers="false" type="String" levelType="TimeYears" caption="年"/>
+				<Level name="month" column="m_id" uniqueMembers="false" type="String" levelType="TimeMonths" caption="月"/>
+				<Level name="week" column="w_b_id" uniqueMembers="false" type="String" levelType="TimeWeeks" caption="周"/>
+				<Level name="day" column="d_id" uniqueMembers="false" type="String" levelType="TimeDays" caption="日"/>
+				<!-- <Level name="小时" column="h_id" uniqueMembers="false" type="String" /> -->
+				<Level name="hour" column="h_id" uniqueMembers="false" type="String" levelType="TimeHours" caption="时"/> 
+				<Level name="minute" column="begin_time" uniqueMembers="false" type="String" levelType="TimeMinutes" caption="开始时间"/> 
+				<!-- <Level name="结束时间" column="end_time" uniqueMembers="false" type="String" /> -->
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="agent_nos" foreignKey="agent_no" caption="座席编号">
+			<!-- <Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="no" >
+				<Level name="agent_no" column="agent_no"  caption="座席编号"/>
+			</Hierarchy> -->
+			<Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="no" primaryKeyTable="dim_agent">
+				<Table name="dim_agent" />
+				<Level name="agent_no" column="no" table="dim_agent" caption="座席编号"/>
+			</Hierarchy>
+			<!-- <Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="code" primaryKeyTable="t_agent">
+				<Join leftKey="code" rightKey="login_name">
+					<Table name="t_agent"/>
+					<Table name="t_user"/>
+				</Join>
+				<Level name="agent_no" column="login_name" table="t_user" caption="座席编号"/>
+			</Hierarchy> -->
+		</Dimension>
+		<Dimension name="orgs" foreignKey="agent_no" caption="行政组">
+			<Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="no" primaryKeyTable="dim_agent">
+				<Join leftKey="org_id" rightKey="id">
+					<Table name="dim_agent"/>
+					<Table name="t_org"/>
+					
+				</Join>
+				<Level name="org" column="name" table="t_org" caption="行政组"/>
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="call_type"  foreignKey="call_type" caption="呼叫类型">
+			<Hierarchy hasAll="true" primaryKey="call_type" >
+				<Table name="dim_call_type" />	
+				<!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+				<Level name="call_type_name"  column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" caption="呼叫类型"/>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="tenant"  foreignKey="tenant_id" caption="租户">
+			<Hierarchy hasAll="true" primaryKey="id" >
+				<Table name="t_tenant" />	
+				<!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+				<Level name="tenant"  column="id" uniqueMembers="false" levelType="Regular" type="String" caption="租户"/>
+			</Hierarchy>
+		</Dimension>
+		
+		
+		<Measure column="calls" aggregator="sum" datatype="Numeric" name="calls" caption="呼叫量"></Measure>
+		<Measure column="length" aggregator="sum" datatype="Numeric" name="length" caption="总时长"></Measure>
+		<!-- <Measure column="avg_length" aggregator="avg" datatype="Numeric" name="avg_length" caption="平均时长" formatString="#,###0"></Measure> -->
+		<Measure column="max_length" aggregator="max" datatype="Numeric" name="max_length" caption="最大时长"></Measure>
+		
+		<Measure column="talk_length" aggregator="sum" datatype="Numeric" name="talk_length" caption="通话时长"></Measure>
+		<Measure column="max_talk_length" aggregator="max" datatype="Numeric" name="max_talk_length" caption="最大通话时长"></Measure>
+		
+		<Measure column="abn_calls" aggregator="sum" datatype="Numeric" name="abn_calls" caption="放弃量"></Measure>
+		<Measure column="abn_length" aggregator="sum" datatype="Numeric" name="abn_length" caption="放弃时长"></Measure>
+		
+		<Measure column="max_abn_length" aggregator="max" datatype="Numeric" name="max_abn_length" caption="最大放弃时长">	</Measure>
+		
+		<Measure column="ans_calls" aggregator="sum" datatype="Numeric" name="ans_calls" caption="应答量">
+		</Measure>
+		<Measure column="alert_length" aggregator="sum" datatype="Numeric" name="alert_length" caption="振铃时长"></Measure>
+		<Measure column="max_alert_length" aggregator="max" datatype="Numeric" name="max_alert_length" caption="最大振铃时长"></Measure>
+		<!-- 
+			&lt;	< 
+			&gt;	>
+		-->
+		<Measure column="ans_calls_10" aggregator="sum" datatype="Numeric" name="ans_calls_10" caption="10秒内应答量"></Measure>
+		<Measure column="ans_calls_20" aggregator="sum" datatype="Numeric" name="ans_calls_20" caption="20秒内应答量"></Measure>
+		<Measure column="ans_calls_30" aggregator="sum" datatype="Numeric" name="ans_calls_30" caption="30秒内应答量"></Measure>
+		<Measure column="ans_calls_40" aggregator="sum" datatype="Numeric" name="ans_calls_40" caption="40秒内应答量"></Measure>
+		<Measure column="ans_calls_50" aggregator="sum" datatype="Numeric" name="ans_calls_50" caption="50秒内应答量"></Measure>
+		<Measure column="ans_calls_60" aggregator="sum" datatype="Numeric" name="ans_calls_60" caption="60秒内应答量"></Measure>
+		
+		<Measure column="abn_calls_10" aggregator="sum" datatype="Numeric" name="abn_calls_10" caption="10秒内放弃量"></Measure>
+		<Measure column="abn_calls_20" aggregator="sum" datatype="Numeric" name="abn_calls_20" caption="20秒内放弃量"></Measure>
+		<Measure column="abn_calls_30" aggregator="sum" datatype="Numeric" name="abn_calls_30" caption="30秒内放弃量"></Measure>
+		<Measure column="abn_calls_40" aggregator="sum" datatype="Numeric" name="abn_calls_40" caption="40秒内放弃量"></Measure>
+		<Measure column="abn_calls_50" aggregator="sum" datatype="Numeric" name="abn_calls_50" caption="50秒内放弃量"></Measure>
+		<Measure column="abn_calls_60" aggregator="sum" datatype="Numeric" name="abn_calls_60" caption="60秒内放弃量"></Measure>
+		
+		<CalculatedMember name="service_level_10" dimension="Measures" caption="服务水平（10s）">
+			<Formula>Iif([Measures].[ans_calls_10]=0,0,[Measures].[ans_calls_10]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_20" dimension="Measures" caption="服务水平（20s）">
+			<Formula>Iif([Measures].[ans_calls_20]=0,0,[Measures].[ans_calls_20]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_30" dimension="Measures" caption="服务水平（30s）">
+			<Formula>Iif([Measures].[ans_calls_30]=0,0,[Measures].[ans_calls_30]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_40" dimension="Measures" caption="服务水平（40s）">
+			<Formula>Iif([Measures].[ans_calls_40]=0,0,[Measures].[ans_calls_40]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_50" dimension="Measures" caption="服务水平（50s）">
+			<Formula>Iif([Measures].[ans_calls_50]=0,0,[Measures].[ans_calls_50]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_60" dimension="Measures" caption="服务水平（60s）">
+			<Formula>Iif([Measures].[ans_calls_60]=0,0,[Measures].[ans_calls_60]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="avg_length" dimension="Measures" caption="平均时长">
+			<Formula>Iif([Measures].[length]=0,0,[Measures].[length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_talk_length" dimension="Measures" caption="平均通话时长">
+			<Formula>Iif([Measures].[talk_length]=0,0,[Measures].[talk_length]/[Measures].[ans_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_alert_length" dimension="Measures" caption="平均振铃时长">
+			<Formula>Iif([Measures].[alert_length]=0,0,[Measures].[alert_length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_abn_length" dimension="Measures" caption="平均放弃时长">
+			<Formula>Iif([Measures].[abn_length]=0,0,[Measures].[abn_length]/[Measures].[abn_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="abn_rate" dimension="Measures" caption="放弃率">
+			<Formula>Iif([Measures].[abn_calls]=0,0,[Measures].[abn_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		<CalculatedMember name="ans_rate" dimension="Measures" caption="接通率">
+			<Formula>Iif([Measures].[ans_calls]=0,0,[Measures].[ans_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+	</cube>
+	
+	<cube name="queue_call" caption="技能组呼叫数据" encoding="UTF-8">
+		<Table name="agg_c_fact_queue"></Table>
+		<Dimension name="times"  foreignKey="time_id" caption="时间">
+			<Hierarchy hasAll="true"  primaryKey="time_id" >	
+				<Table name="dim_date" />
+				<Level name="year" column="y_id" uniqueMembers="false" type="String" levelType="TimeYears" caption="年"/>
+				<Level name="month" column="m_id" uniqueMembers="false" type="String" levelType="TimeMonths" caption="月"/>
+				<Level name="week" column="w_b_id" uniqueMembers="false" type="String" levelType="TimeWeeks" caption="周"/>
+				<Level name="day" column="d_id" uniqueMembers="false" type="String" levelType="TimeDays" caption="日"/>
+				<!-- <Level name="小时" column="h_id" uniqueMembers="false" type="String" /> -->
+				<Level name="hour" column="h_id" uniqueMembers="false" type="String" levelType="TimeHours" caption="时"/> 
+				<Level name="minute" column="begin_time" uniqueMembers="false" type="String" levelType="TimeMinutes" caption="开始时间"/> 
+				<!-- <Level name="结束时间" column="end_time" uniqueMembers="false" type="String" /> -->
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="queue_nos" foreignKey="queue_no" caption="技能组编号" >
+			<Hierarchy hasAll="true" allMemberName="queue_no" primaryKey="queue_no" primaryKeyTable="dim_queue">
+				<Table name="dim_queue" />
+				<Level name="queue_no" column="queue_no" table="dim_queue" caption="技能组编号"/>
+			</Hierarchy>
+			<!-- <Hierarchy hasAll="true" allMemberName="queue_no" primaryKey="queue_no">
+				<Level name="queue_no" column="queue_no" caption="技能组编号"/>
+			</Hierarchy> -->
+			<!-- <Hierarchy hasAll="true" allMemberName="queue_no" primaryKey="code" primaryKeyTable="t_queue">
+				<Table name="t_queue" />
+				<Level name="queue_no" column="code" table="t_queue" caption="技能组编号"/>
+			</Hierarchy> -->
+		</Dimension>
+		<Dimension name="tenant" foreignKey="tenant_id" caption="租户">
+	   <Hierarchy hasAll="true" primaryKey="id" >
+	    <Table name="t_tenant" />	
+	    <!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+	    <Level name="tenant" column="id" uniqueMembers="false" levelType="Regular" type="String" caption="租户"/>
+	   </Hierarchy>
+	  </Dimension>
+		<Measure column="calls" aggregator="sum" datatype="Numeric" name="calls" caption="呼叫量"></Measure>
+		<Measure column="length" aggregator="sum" datatype="Numeric" name="length" caption="总呼叫时长"></Measure>
+		<!-- <Measure column="avg_length" aggregator="avg" datatype="Numeric" name="avg_length" caption="平均呼叫时长" formatString="#,###0"></Measure> -->
+		<Measure column="max_length" aggregator="max" datatype="Numeric" name="max_length" caption="最大呼叫时长"></Measure>
+		
+		<Measure column="abn_calls" aggregator="sum" datatype="Numeric" name="abn_calls" caption="放弃量"></Measure>
+		<Measure column="abn_length" aggregator="sum" datatype="Numeric" name="abn_length" caption="放弃时长"></Measure>
+		<Measure column="max_abn_length" aggregator="max" datatype="Numeric" name="max_abn_length" caption="最大放弃时长"></Measure>
+		
+		<Measure column="ans_calls" aggregator="sum" datatype="Numeric" name="ans_calls" caption="应答量"></Measure>
+		
+		<Measure column="talk_length" aggregator="sum" datatype="Numeric" name="talk_length" caption="通话时长"></Measure>
+
+		<Measure column="max_talk_length" aggregator="max" datatype="Numeric" name="max_talk_length" caption="最大通话时长"></Measure>
+		
+		<Measure column="q_calls" aggregator="sum" datatype="Numeric" name="q_calls" caption="排队量"></Measure>
+		
+		<Measure column="q_length" aggregator="sum" datatype="Numeric" name="q_length" caption="等待总时长"></Measure>
+		
+		<Measure column="max_q_length" aggregator="max" datatype="Numeric" name="max_q_length" caption="最大等待时长"></Measure>
+		
+		<Measure column="abn_q_calls" aggregator="sum" datatype="Numeric" name="abn_q_calls" caption="等待放弃量"></Measure>
+		<Measure column="abn_q_length" aggregator="sum" datatype="Numeric" name="abn_q_length" caption="等待放弃时长"></Measure>
+
+		<Measure column="max_abn_q_length" aggregator="max" datatype="Numeric" name="max_abn_q_length" caption="最大等待放弃时长"></Measure>
+		
+		<!-- 
+			&lt;	< 
+			&gt;	>
+		-->
+		<Measure column="ans_calls_10" aggregator="sum" datatype="Numeric" name="ans_calls_10" caption="10秒内应答量"></Measure>
+		<Measure column="ans_calls_20" aggregator="sum" datatype="Numeric" name="ans_calls_20" caption="20秒内应答量"></Measure>
+		<Measure column="ans_calls_30" aggregator="sum" datatype="Numeric" name="ans_calls_30" caption="30秒内应答量"></Measure>
+		<Measure column="ans_calls_40" aggregator="sum" datatype="Numeric" name="ans_calls_40" caption="40秒内应答量"></Measure>
+		<Measure column="ans_calls_50" aggregator="sum" datatype="Numeric" name="ans_calls_50" caption="50秒内应答量"></Measure>
+		<Measure column="ans_calls_60" aggregator="sum" datatype="Numeric" name="ans_calls_60" caption="60秒内应答量"></Measure>
+		
+		<Measure column="abn_calls_10" aggregator="sum" datatype="Numeric" name="abn_calls_10" caption="10秒内放弃量"></Measure>
+		<Measure column="abn_calls_20" aggregator="sum" datatype="Numeric" name="abn_calls_20" caption="20秒内放弃量"></Measure>
+		<Measure column="abn_calls_30" aggregator="sum" datatype="Numeric" name="abn_calls_30" caption="30秒内放弃量"></Measure>
+		<Measure column="abn_calls_40" aggregator="sum" datatype="Numeric" name="abn_calls_40" caption="40秒内放弃量"></Measure>
+		<Measure column="abn_calls_50" aggregator="sum" datatype="Numeric" name="abn_calls_50" caption="50秒内放弃量"></Measure>
+		<Measure column="abn_calls_60" aggregator="sum" datatype="Numeric" name="abn_calls_60" caption="60秒内放弃量"></Measure>
+		
+		<CalculatedMember name="service_level_10" dimension="Measures" caption="服务水平（10s）">
+			<Formula>Iif([Measures].[ans_calls_10]=0,0,[Measures].[ans_calls_10]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_20" dimension="Measures" caption="服务水平（20s）">
+			<Formula>Iif([Measures].[ans_calls_20]=0,0,[Measures].[ans_calls_20]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_30" dimension="Measures" caption="服务水平（30s）">
+			<Formula>Iif([Measures].[ans_calls_30]=0,0,[Measures].[ans_calls_30]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_40" dimension="Measures" caption="服务水平（40s）">
+			<Formula>Iif([Measures].[ans_calls_40]=0,0,[Measures].[ans_calls_40]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_50" dimension="Measures" caption="服务水平（50s）">
+			<Formula>Iif([Measures].[ans_calls_50]=0,0,[Measures].[ans_calls_50]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_60" dimension="Measures" caption="服务水平（60s）">
+			<Formula>Iif([Measures].[ans_calls_60]=0,0,[Measures].[ans_calls_60]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="avg_abn_length" dimension="Measures" caption="平均放弃时长">
+			<Formula>Iif([Measures].[abn_length]=0,0,[Measures].[abn_length]/[Measures].[abn_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_length" dimension="Measures" caption="平均呼叫时长">
+			<Formula>Iif([Measures].[length]=0,0,[Measures].[length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_talk_length" dimension="Measures" caption="平均通话时长">
+			<Formula>Iif([Measures].[talk_length]=0,0,[Measures].[talk_length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_q_length" dimension="Measures" caption="平均等待时长">
+			<Formula>Iif([Measures].[q_length]=0,0,[Measures].[q_length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_abn_q_length" dimension="Measures" caption="平均排队放弃时长">
+			<Formula>iif([Measures].[abn_q_length]=0,0,[Measures].[abn_q_length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="abn_rate" dimension="Measures" caption="放弃率">
+			<Formula>Iif([Measures].[abn_calls]=0,0,[Measures].[abn_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		<CalculatedMember name="ans_rate" dimension="Measures" caption="接通率">
+			<Formula>Iif([Measures].[ans_calls]=0,0,[Measures].[ans_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+	</cube>
+	
+	
+	<cube name="call_data" caption="呼叫数据" encoding="UTF-8">
+		<Table name="agg_c_fact_call"></Table>
+		<Dimension name="times"  foreignKey="time_id" caption="时间">
+			<Hierarchy hasAll="true"  primaryKey="time_id" >	
+				<Table name="dim_date" />
+				<Level name="year" column="y_id" uniqueMembers="false" type="String" levelType="TimeYears" caption="年"/>
+				<Level name="month" column="m_id" uniqueMembers="false" type="String" levelType="TimeMonths" caption="月"/>
+				<Level name="week" column="w_b_id" uniqueMembers="false" type="String" levelType="TimeWeeks" caption="周"/>
+				<Level name="day" column="d_id" uniqueMembers="false" type="String" levelType="TimeDays" caption="日"/>
+				<!-- <Level name="小时" column="h_id" uniqueMembers="false" type="String" /> -->
+				<Level name="hour" column="h_id" uniqueMembers="false" type="String" levelType="TimeHours" caption="时"/> 
+				<Level name="minute" column="begin_time" uniqueMembers="false" type="String" levelType="TimeMinutes" caption="开始时间"/> 
+				<!-- <Level name="结束时间" column="end_time" uniqueMembers="false" type="String" /> -->
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="call_type"  foreignKey="call_type" caption="呼叫类型">
+			<Hierarchy hasAll="true" primaryKey="call_type" >
+				<Table name="dim_call_type" />	
+				<!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+				<Level name="call_type_name" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" caption="呼叫类型"/>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="is_satisfaction"  foreignKey="is_satisfaction" caption="是否转满意度">
+			<Hierarchy hasAll="true" primaryKey="value" >
+				<Table name="dim_is_satisfaction" />	
+				<!-- <Level name="dict_desc" column="dict_desc" uniqueMembers="false" levelType="Regular" type="String" caption="满意度"/> -->
+				<Level name="name" column="name" uniqueMembers="false" levelType="Regular" type="String" caption="是否转满意度"/>
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="satisfaction"  foreignKey="satisfaction" caption="满意度">
+			<Hierarchy hasAll="true" primaryKey="id" >
+				<Table name="dim_satisfaction" />	
+				<!-- <Level name="dict_desc" column="dict_desc" uniqueMembers="false" levelType="Regular" type="String" caption="满意度"/> -->
+				<Level name="id" column="id" uniqueMembers="false" levelType="Regular" type="String" caption="满意度id"/>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="tenant" foreignKey="tenant_id" caption="租户">
+		   <Hierarchy hasAll="true" primaryKey="id" >
+		    <Table name="t_tenant" />	
+		    <!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+		    <Level name="tenant" column="id" uniqueMembers="false" levelType="Regular" type="String" caption="租户"/>
+		   </Hierarchy>
+		  </Dimension>
+		
+		<Measure column="calls" aggregator="sum" datatype="Numeric" name="calls" caption="呼叫量"></Measure>
+		<Measure column="length" aggregator="sum" datatype="Numeric" name="length" caption="总呼叫时长"></Measure>
+		<!-- <Measure column="avg_length" aggregator="avg" datatype="Numeric" name="avg_length" caption="平均时长" formatString="#,###0"></Measure> -->
+		<Measure column="max_length" aggregator="max" datatype="Numeric" name="max_length" caption="最大时长"></Measure>
+		
+		<Measure column="talk_length" aggregator="sum" datatype="Numeric" name="talk_length" caption="通话时长"></Measure>
+		
+		<Measure column="abn_calls" aggregator="sum" datatype="Numeric" name="abn_calls" caption="放弃量"></Measure>
+		<Measure column="abn_length" aggregator="sum" datatype="Numeric" name="abn_length" caption="放弃时长"></Measure>
+		
+		<Measure column="ans_calls" aggregator="sum" datatype="Numeric" name="ans_calls" caption="应答量"></Measure>
+		
+		<Measure column="ans_length" aggregator="sum" datatype="Numeric" name="ans_length" caption="应答前时长"></Measure>
+		
+		<Measure column="max_ans_length" aggregator="max" datatype="Numeric" name="max_ans_length" caption="最大应答前时长"></Measure>
+		
+		<Measure column="to_satisfaction_calls" aggregator="sum" datatype="Numeric" name="to_satisfaction_calls" caption="转满意度量"></Measure>
+		
+		<Measure column="no_satisfaction_calls" aggregator="sum" datatype="Numeric" name="no_satisfaction_calls" caption="未转满意度量"></Measure>
+		
+		<!-- 
+			&lt;	< 
+			&gt;	>
+		-->
+		<Measure column="ans_calls_10" aggregator="sum" datatype="Numeric" name="ans_calls_10" caption="10秒内应答量"></Measure>
+		<Measure column="ans_calls_20" aggregator="sum" datatype="Numeric" name="ans_calls_20" caption="20秒内应答量"></Measure>
+		<Measure column="ans_calls_30" aggregator="sum" datatype="Numeric" name="ans_calls_30" caption="30秒内应答量"></Measure>
+		<Measure column="ans_calls_40" aggregator="sum" datatype="Numeric" name="ans_calls_40" caption="40秒内应答量"></Measure>
+		<Measure column="ans_calls_50" aggregator="sum" datatype="Numeric" name="ans_calls_50" caption="50秒内应答量"></Measure>
+		<Measure column="ans_calls_60" aggregator="sum" datatype="Numeric" name="ans_calls_60" caption="60秒内应答量"></Measure>
+		
+		<Measure column="abn_calls_10" aggregator="sum" datatype="Numeric" name="abn_calls_10" caption="10秒内放弃量"></Measure>
+		<Measure column="abn_calls_20" aggregator="sum" datatype="Numeric" name="abn_calls_20" caption="20秒内放弃量"></Measure>
+		<Measure column="abn_calls_30" aggregator="sum" datatype="Numeric" name="abn_calls_30" caption="30秒内放弃量"></Measure>
+		<Measure column="abn_calls_40" aggregator="sum" datatype="Numeric" name="abn_calls_40" caption="40秒内放弃量"></Measure>
+		<Measure column="abn_calls_50" aggregator="sum" datatype="Numeric" name="abn_calls_50" caption="50秒内放弃量"></Measure>
+		<Measure column="abn_calls_60" aggregator="sum" datatype="Numeric" name="abn_calls_60" caption="60秒内放弃量"></Measure>
+		
+		<CalculatedMember name="service_level_10" dimension="Measures" caption="服务水平（10s）">
+			<Formula>Iif([Measures].[ans_calls_10]=0,0,[Measures].[ans_calls_10]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_20" dimension="Measures" caption="服务水平（20s）">
+			<Formula>Iif([Measures].[ans_calls_20]=0,0,[Measures].[ans_calls_20]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_30" dimension="Measures" caption="服务水平（30s）">
+			<Formula>Iif([Measures].[ans_calls_30]=0,0,[Measures].[ans_calls_30]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_40" dimension="Measures" caption="服务水平（40s）">
+			<Formula>Iif([Measures].[ans_calls_40]=0,0,[Measures].[ans_calls_40]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_50" dimension="Measures" caption="服务水平（50s）">
+			<Formula>Iif([Measures].[ans_calls_50]=0,0,[Measures].[ans_calls_50]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="service_level_60" dimension="Measures" caption="服务水平（60s）">
+			<Formula>Iif([Measures].[ans_calls_60]=0,0,[Measures].[ans_calls_60]  / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_talk_length" dimension="Measures" caption="平均通话时长">
+			<Formula>Iif([Measures].[talk_length]=0,0,[Measures].[talk_length]/[Measures].[ans_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_length" dimension="Measures" caption="平均呼叫时长">
+			<Formula>Iif([Measures].[length]=0,0,[Measures].[length]/[Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="avg_abn_length" dimension="Measures" caption="平均放弃时长">
+			<Formula>Iif([Measures].[abn_length]=0,0,[Measures].[abn_length]/[Measures].[abn_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		
+		<CalculatedMember name="avg_ans_length" dimension="Measures" caption="平均应答前时长">
+			<Formula>Iif([Measures].[ans_length]=0,0,[Measures].[ans_length]/[Measures].[ans_calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0"/>
+		</CalculatedMember>
+		<CalculatedMember name="abn_rate" dimension="Measures" caption="放弃率">
+			<Formula>Iif([Measures].[abn_calls]=0,0,[Measures].[abn_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		<CalculatedMember name="ans_rate" dimension="Measures" caption="接通率">
+			<Formula>Iif([Measures].[ans_calls]=0,0,[Measures].[ans_calls] / [Measures].[calls])</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="#,##0.00%"/>
+		</CalculatedMember>
+		
+	</cube>
+	
+	<cube name="cube_agent_state" caption="座席状态统计数据" encoding="UTF-8">
+		<Table name="agg_c_fact_agent_status_fact"></Table>
+		<Dimension name="times"  foreignKey="time_id" caption="时间">
+			<Hierarchy hasAll="true"  primaryKey="time_id" >	
+				<Table name="dim_date" />
+				<Level name="year" column="y_id" uniqueMembers="false" type="String" levelType="TimeYears" caption="年"/>
+				<Level name="month" column="m_id" uniqueMembers="false" type="String" levelType="TimeMonths" caption="月"/>
+				<Level name="week" column="w_b_id" uniqueMembers="false" type="String" levelType="TimeWeeks" caption="周"/>
+				<Level name="day" column="d_id" uniqueMembers="false" type="String" levelType="TimeDays" caption="日"/>
+				<!-- <Level name="小时" column="h_id" uniqueMembers="false" type="String" /> -->
+				<Level name="hour" column="h_id" uniqueMembers="false" type="String" levelType="TimeHours" caption="时"/> 
+				<Level name="minute" column="begin_time" uniqueMembers="false" type="String" levelType="TimeMinutes" caption="开始时间"/> 
+				<!-- <Level name="结束时间" column="end_time" uniqueMembers="false" type="String" /> -->
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="agent_nos" foreignKey="agent_no" caption="座席编号">
+			<Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="no" primaryKeyTable="dim_agent">
+				<Table name="dim_agent" />
+				<Level name="agent_no" column="no" table="dim_agent" caption="座席编号"/>
+			</Hierarchy>
+			
+			<!-- <Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="code" primaryKeyTable="t_agent">
+				<Join leftKey="code" rightKey="login_name">
+					<Table name="t_agent"/>
+					<Table name="t_user"/>
+				</Join>
+				<Level name="agent_no" column="user_name" table="t_user" caption="座席编号"/>
+			</Hierarchy> -->
+			<!-- <Hierarchy hasAll="true" allMemberName="agent_no" primaryKey="no" >
+				<Level name="agent_no" column="agent_no"  caption="座席编号"/>
+			</Hierarchy> -->
+		</Dimension>
+		
+		<Dimension name="agent_status"  foreignKey="agent_status" caption="座席状态">
+			<Hierarchy hasAll="true" allMemberName="agent_status" primaryKey="agent_status" >	
+				<Table name="dim_agent_status" />	
+				<Level name="agent_status_name" column="agent_status_name" uniqueMembers="false" levelType="Regular" type="String" caption="座席状态"/>
+			</Hierarchy>
+		</Dimension>
+		<Dimension name="reason_code"  foreignKey="reason_code" caption="小休类型" >
+			<Hierarchy hasAll="true" allMemberName="reason_code" primaryKey="value" >
+				<Table name="dim_dict" />	
+				<Level name="reason_code_name" column="name" uniqueMembers="false" levelType="Regular" type="String" primaryKeyTable="dim_dict" caption="小休原因"/>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="tenant" foreignKey="tenant_id" caption="租户">
+		   <Hierarchy hasAll="true" primaryKey="id" >
+		    <Table name="t_tenant" />	
+		    <!-- <Level name="call_type" column="call_type_name" uniqueMembers="false" levelType="Regular" type="String" /> -->
+		    <Level name="tenant" column="id" uniqueMembers="false" levelType="Regular" type="String" caption="租户"/>
+		   </Hierarchy>
+		  </Dimension>
+		
+		<Measure name="length" column="length" aggregator="sum" formatString="#,###" datatype="Numeric" caption="总时长"/>
+		<Measure name="times" column="times" aggregator="sum" formatString="#,###" datatype="Numeric" caption="次数"/>
+	</cube>
+</Schema>
